@@ -1,26 +1,31 @@
-## Tech Stack
+# DotCloud
+
+## TechStack
+
 - Typescript
 - Mongo
 
-## Tables:
+## Tables
 
-### User:
-- uid 
-- username
-- email
-- password
-- isVerified
+### User
 
-### Project:
+- uid - uuid
+- username - string
+- email - email
+- password - hash/string
+- isVerified - bool
 
-- uid
-- puid
-- projname
-- projtoken
-- createdAt
-- updatedAt
+### Project
 
-### KeyValue:
+- uid - uuid
+- puid - uuid
+- projname - string
+- projtoken - hash
+- createdAt - time
+- updatedAt - time
+
+### KeyValue
+
 - puid
 - uid
 - key
@@ -28,13 +33,15 @@
 - createdAt
 - updatedAt
 
-## Routes:
+## Routes
 
-### User:
+### User Routes
+
 - POST /signup
-- POST /login
+- POST /signin
 
-### Project:
+### Project Routes
+
 - POST /project
 - PUT /project
 - DELETE /project
@@ -43,14 +50,15 @@
 - GET /projtoken
 
 Query Params:
-```
+
+```md
 key:
+
 - keyname
 
-type: 
+type:
+
 - JSON
-- CSV 
+- CSV
 - Array
 ```
-
-
