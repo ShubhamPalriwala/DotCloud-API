@@ -6,7 +6,7 @@ const sequelize = new Sequelize({
   username: "postgres",
   password: "toor",
   storage: ":memory:",
-  models: [`${__dirname}/models`], // or [Player, Team],
+  models: [`${__dirname}/models`],
 });
 
 sequelize

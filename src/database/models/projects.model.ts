@@ -1,7 +1,27 @@
-import { Table, Column, Model, Unique, DataType } from "sequelize-typescript";
+/* eslint-disable import/no-unresolved */
+import {
+  Table,
+  Column,
+  Model,
+  Unique,
+  DataType,
+  HasMany,
+  BelongsToMany,
+  ForeignKey,
+  PrimaryKey,
+  AutoIncrement,
+} from "sequelize-typescript";
+import Keys from "./keys.model";
+import Organisation from "./organisation.model";
+import User from "./user.model";
 
 @Table
 class Projects extends Model<Projects> {
+  @PrimaryKey
+  @AutoIncrement
+  @Column
+  projectId: number;
+
   @Column({
     type: DataType.ARRAY(DataType.TEXT),
   })
@@ -14,6 +34,18 @@ class Projects extends Model<Projects> {
   @Unique
   @Column
   phone: string;
+
+  @ForeignKey(() => User)
+  owner: number;
+
+  @ForeignKey(() => Organisation)
+  organisation: number;
+
+  @HasMany(() => Keys)
+  keys: Keys[];
+
+  @BelongsToMany(() => User, () => Organisation)
+  owners: User[];
 }
 
 export default Projects;
