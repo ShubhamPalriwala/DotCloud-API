@@ -1,4 +1,5 @@
 import express from "express";
+import "./database";
 
 const app = express();
 const port = process.env.PORT || "8000";
