@@ -4,6 +4,7 @@ import cors from "cors";
 import morgan from "morgan";
 import "./database";
 import projectsRouter from "./routes/projects";
+import keysRouter from "./routes/key";
 
 process.on("uncaughtException", (e) => {
   console.log(e);
@@ -23,5 +24,6 @@ app.use(cors({ optionsSuccessStatus: 200 }));
 app.use(morgan("tiny"));
 
 app.use(projectsRouter);
+app.use(keysRouter);
 
 export default app;

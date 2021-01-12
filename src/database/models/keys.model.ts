@@ -6,6 +6,9 @@ import {
   PrimaryKey,
   AutoIncrement,
   ForeignKey,
+  BelongsTo,
+  NotNull,
+  AllowNull,
 } from "sequelize-typescript";
 import Projects from "./projects.model";
 
@@ -17,7 +20,10 @@ class Keys extends Model<Keys> {
   keyId: number;
 
   @ForeignKey(() => Projects)
-  projectId: number;
+  projectId: Projects;
+
+  @BelongsTo(() => Projects)
+  project: Projects;
 
   @Column
   key: string;
