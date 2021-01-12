@@ -30,12 +30,13 @@ class ProjectsController {
   };
 
   updateProject = async (req: Request, res: Response): Promise<void> => {
+    const { projectId } = req.body;
     try {
       const project = await Projects.update(req.body, {
-        where: req.body.projectId,
+        where: { projectId },
       });
-      if (project) {
-        res.send(project);
+      if (project[0]) {
+        res.send("Project Updated!");
       } else {
         res.send("No projects found");
       }
