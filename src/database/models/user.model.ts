@@ -15,10 +15,6 @@ class User extends Model<User> {
   @Column
   email: string;
 
-  @Unique
-  @Column
-  phone: string;
-
   @HasMany(() => Projects)
   projects: Projects[];
 

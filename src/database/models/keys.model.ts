@@ -11,6 +11,7 @@ import {
   AllowNull,
 } from "sequelize-typescript";
 import Projects from "./projects.model";
+import User from "./user.model";
 
 @Table
 class Keys extends Model<Keys> {
@@ -18,6 +19,13 @@ class Keys extends Model<Keys> {
   @AutoIncrement
   @Column
   keyId: number;
+
+  @Column
+  @ForeignKey(() => User)
+  creatorId: number;
+
+  @BelongsTo(() => User)
+  user: User;
 
   @ForeignKey(() => Projects)
   projectId: Projects;
