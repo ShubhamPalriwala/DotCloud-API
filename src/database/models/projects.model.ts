@@ -19,6 +19,7 @@ import User from "./user.model";
 class Projects extends Model<Projects> {
   @PrimaryKey
   @AutoIncrement
+  @ForeignKey(() => Keys)
   @Column
   projectId: number;
 
