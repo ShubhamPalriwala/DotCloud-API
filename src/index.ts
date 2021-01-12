@@ -1,10 +1,11 @@
-/* eslint-disable import/extensions */
-/* eslint-disable import/no-unresolved */
 import express from "express";
+import projectsRouter from "./routes/projects";
 import "./database";
 
 const app = express();
 const port = process.env.PORT || "8000";
+
+app.use(projectsRouter);
 
 app.get("/", (req, res) => {
   res.send("Up and running 😎");
