@@ -10,6 +10,7 @@ import {
   ForeignKey,
   PrimaryKey,
   AutoIncrement,
+  BelongsTo,
 } from "sequelize-typescript";
 import Keys from "./keys.model";
 import Organisation from "./organisation.model";
@@ -32,10 +33,6 @@ class Projects extends Model<Projects> {
   @Column
   token: string;
 
-  @Unique
-  @Column
-  phone: string;
-
   @ForeignKey(() => User)
   owner: number;
 
@@ -45,7 +42,7 @@ class Projects extends Model<Projects> {
   @HasMany(() => Keys)
   keys: Keys[];
 
-  @BelongsToMany(() => User, () => Organisation)
+  @BelongsTo(() => User)
   owners: User[];
 }
 

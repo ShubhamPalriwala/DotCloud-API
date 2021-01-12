@@ -7,6 +7,7 @@ import passport from "passport";
 import projectsRouter from "./routes/projects";
 import keysRouter from "./routes/key";
 import userRouter from "./routes/user";
+import organisationRouter from "./routes/organisations";
 
 process.on("uncaughtException", (e) => {
   console.log(e);
@@ -32,6 +33,7 @@ app.get("/", (req, res) => {
 });
 app.use("/user", userRouter);
 app.use(projectsRouter);
+app.use(organisationRouter);
 app.use(keysRouter);
 
 export default app;
