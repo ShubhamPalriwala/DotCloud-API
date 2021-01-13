@@ -1,4 +1,11 @@
-import { Response, Request } from "express";
+import { Request, Response } from "express";
+import {
+  NotFoundResponse,
+  ForbiddenResponse,
+  InternalErrorResponse,
+  SuccessResponse,
+  FailureMsgResponse,
+} from "../core/ApiResponse";
 import Projects from "../database/models/projects.model";
 import Keys from "../database/models/keys.model";
 
@@ -11,14 +18,16 @@ class KeysController {
         where: { keyId },
       });
       if (key) {
-        res.send(
-          this.isAuthorised(key.project, token as string) ? key : "Unauthorised"
-        );
+        if (this.isAuthorised(key.project, token as string)) {
+          new SuccessResponse("Key Found!", key).send(res);
+        } else {
+          new ForbiddenResponse("You do not have access to this key").send(res);
+        }
       } else {
-        res.send("No such key found!");
+        new NotFoundResponse("No such key found!").send(res);
       }
     } catch (error) {
-      res.send("Error fetching key");
+      new InternalErrorResponse("Cannot fetch the requested key").send(res);
     }
   };
 
@@ -26,10 +35,11 @@ class KeysController {
     try {
       const key = await Keys.create(req.body);
       if (key) {
-        res.send("Key Created");
+        new SuccessResponse("Key Created!", key).send(res);
       }
+      throw Error("Unwanted error!");
     } catch (error) {
-      res.send("Error fetching key");
+      new InternalErrorResponse("Error creating the key!").send(res);
     }
   };
 
@@ -38,12 +48,12 @@ class KeysController {
     try {
       const key = await Keys.update(req.body, { where: { keyId } });
       if (key[0]) {
-        res.send("Key updated!");
+        new SuccessResponse("Key has been updated!", "").send(res);
       } else {
-        res.send("Key not updated");
+        new FailureMsgResponse("Key not updated!").send(res);
       }
     } catch (error) {
-      res.send("Error updating key");
+      new InternalErrorResponse("Error updating the key!").send(res);
     }
   };
 
@@ -52,10 +62,10 @@ class KeysController {
     try {
       const key = await Keys.destroy({ where: { keyId } });
       if (key) {
-        res.send("Key deleted!");
+        new SuccessResponse("Key has been deleted!", "").send(res);
       }
     } catch (error) {
-      res.send("Error updating key");
+      new InternalErrorResponse("Error deleting the key!").send(res);
     }
   };
 
@@ -64,16 +74,16 @@ class KeysController {
     try {
       const key = await Keys.findAll({ where: { projectId } });
       if (key) {
-        res.send(
-          this.isAuthorised(key[0].projectId, token as string)
-            ? key
-            : "Unauthorised"
-        );
+        if (this.isAuthorised(key[0].project, token as string)) {
+          new SuccessResponse("Key Found!", key).send(res);
+        } else {
+          new ForbiddenResponse("You do not have access to this key").send(res);
+        }
       } else {
-        res.send("No keys found for project!");
+        new NotFoundResponse("No keys found for this project!").send(res);
       }
     } catch (error) {
-      res.send("Error fetching project keys!");
+      new InternalErrorResponse("Error fetching the requested keys!").send(res);
     }
   };
 

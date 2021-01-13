@@ -3,6 +3,7 @@ import passport from "passport";
 import passportJWT from "passport-jwt";
 import * as dotenv from "dotenv";
 import User from "../database/models/user.model";
+import { SuccessResponse } from "../core/ApiResponse";
 
 dotenv.config();
 
@@ -42,7 +43,7 @@ const generateJwtToken = (
   responseData: any
 ): void => {
   const token = jwt.sign(payload, jwtOptions.secretOrKey);
-  res.send({ token, user: responseData });
+  new SuccessResponse("User Data", { token, user: responseData }).send(res);
 };
 
 export default { generateJwtToken };

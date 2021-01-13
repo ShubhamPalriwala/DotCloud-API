@@ -1,4 +1,10 @@
 import { Request, Response } from "express";
+import {
+  SuccessResponse,
+  NotFoundResponse,
+  InternalErrorResponse,
+  FailureMsgResponse,
+} from "../core/ApiResponse";
 import Projects from "../database/models/projects.model";
 
 class ProjectsController {
@@ -7,12 +13,12 @@ class ProjectsController {
     try {
       const project = await Projects.findOne({ where: { projectId } });
       if (project) {
-        res.send(project);
+        new SuccessResponse("Project Found!", project).send(res);
       } else {
-        res.send("No projects found");
+        new NotFoundResponse("No Project found!").send(res);
       }
     } catch (error) {
-      res.send(`Error due to ${error}`);
+      new InternalErrorResponse("Cannot fetch the requested key").send(res);
     }
   };
 
@@ -20,12 +26,12 @@ class ProjectsController {
     try {
       const project = await Projects.create(req.body);
       if (project) {
-        res.send(project);
+        new SuccessResponse("Project Created", project).send(res);
       } else {
-        res.send("Project created!");
+        new FailureMsgResponse("Cannot create project!").send(res);
       }
     } catch (error) {
-      res.send(`Error due to ${error}`);
+      new InternalErrorResponse("Cannot fetch the requested key").send(res);
     }
   };
 
@@ -36,12 +42,12 @@ class ProjectsController {
         where: { projectId },
       });
       if (project[0]) {
-        res.send("Project Updated!");
+        new SuccessResponse("Project Updated", project).send(res);
       } else {
-        res.send("No projects found");
+        new FailureMsgResponse("Cannot update this project").send(res);
       }
     } catch (error) {
-      res.send(`Error due to ${error}`);
+      new InternalErrorResponse("Cannot fetch the requested key").send(res);
     }
   };
 
@@ -50,12 +56,12 @@ class ProjectsController {
     try {
       const project = await Projects.destroy({ where: { projectId } });
       if (project) {
-        res.send("Deleted!");
+        new SuccessResponse("Project Deleted!", "").send(res);
       } else {
-        res.send("unable to delete!");
+        new FailureMsgResponse("Unable to delte the project!").send(res);
       }
     } catch (error) {
-      res.send(`Error due to ${error}`);
+      new InternalErrorResponse("Cannot fetch the requested key").send(res);
     }
   };
 }
