@@ -30,7 +30,11 @@ class Keys extends Model<Keys> {
   @ForeignKey(() => Projects)
   projectId: Projects;
 
-  @BelongsTo(() => Projects)
+  @BelongsTo(() => Projects, {
+    foreignKey: {
+      allowNull: false,
+    },
+  })
   project: Projects;
 
   @Column

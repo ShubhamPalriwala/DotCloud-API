@@ -3,8 +3,8 @@
 import { Response } from "express";
 
 enum StatusCode {
-  SUCCESS = "10000",
-  FAILURE = "10001",
+  SUCCESS = "true",
+  FAILURE = "false",
 }
 
 enum ResponseStatus {
@@ -80,12 +80,6 @@ export class BadRequestResponse extends ApiResponse {
 export class InternalErrorResponse extends ApiResponse {
   constructor(message = "Internal Error") {
     super(StatusCode.FAILURE, ResponseStatus.INTERNAL_ERROR, message);
-  }
-}
-
-export class SuccessMsgResponse extends ApiResponse {
-  constructor(message: string) {
-    super(StatusCode.SUCCESS, ResponseStatus.SUCCESS, message);
   }
 }
 

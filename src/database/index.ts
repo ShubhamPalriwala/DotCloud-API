@@ -10,6 +10,6 @@ const sequelize = new Sequelize({
 });
 
 sequelize
-  .sync({ force: false, logging: false })
+  .sync({ force: true, logging: false })
   .then(() => console.log("Connected to database"))
   .catch((err) => console.log(`Error connecting to database due to ${err}`));
