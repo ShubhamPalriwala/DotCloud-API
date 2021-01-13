@@ -43,10 +43,10 @@ class userController {
     }
   };
 
-  userRead = async (req: any, res: Response): Promise<void> => {
+  userRead = async (req: Request, res: Response): Promise<void> => {
     try {
       const user = await User.findOne({
-        where: { username: req.user.username },
+        where: { username: req.userInfo.username },
       });
       new SuccessResponse("Found user!", user).send(res);
     } catch (error) {

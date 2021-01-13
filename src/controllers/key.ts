@@ -32,10 +32,17 @@ class KeysController {
   };
 
   createKey = async (req: Request, res: Response): Promise<void> => {
+    const { projectId, key, value, collaborators } = req.body;
     try {
-      const key = await Keys.create(req.body);
-      if (key) {
-        new SuccessResponse("Key Created!", key).send(res);
+      const newKey = await Keys.create({
+        creatorId: req.userInfo.id,
+        projectId,
+        key,
+        value,
+        collaborators,
+      });
+      if (newKey) {
+        new SuccessResponse("Key Created!", newKey).send(res);
       }
       throw Error("Unwanted error!");
     } catch (error) {
@@ -44,9 +51,16 @@ class KeysController {
   };
 
   updateKey = async (req: Request, res: Response): Promise<void> => {
-    const { keyId } = req.body;
+    const { keyId, value } = req.body;
     try {
-      const key = await Keys.update(req.body, { where: { keyId } });
+      const key = await Keys.update(
+        {
+          value,
+        },
+        {
+          where: { keyId, creatorId: req.userInfo.id },
+        }
+      );
       if (key[0]) {
         new SuccessResponse("Key has been updated!", "").send(res);
       } else {
@@ -60,7 +74,9 @@ class KeysController {
   deleteKey = async (req: Request, res: Response): Promise<void> => {
     const { keyId } = req.query;
     try {
-      const key = await Keys.destroy({ where: { keyId } });
+      const key = await Keys.destroy({
+        where: { keyId, creatorId: req.userInfo.id },
+      });
       if (key) {
         new SuccessResponse("Key has been deleted!", "").send(res);
       }

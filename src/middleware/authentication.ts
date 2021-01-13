@@ -1,3 +1,4 @@
+import { Response } from "express";
 import jwt from "jsonwebtoken";
 import passport from "passport";
 import passportJWT from "passport-jwt";
@@ -10,10 +11,10 @@ dotenv.config();
 const { ExtractJwt } = passportJWT;
 
 const JwtStrategy = passportJWT.Strategy;
-const jwtOptions = {} as any;
-
-jwtOptions.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
-jwtOptions.secretOrKey = process.env.JWT_SECRET;
+const jwtOptions = {
+  jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+  secretOrKey: process.env.JWT_SECRET,
+};
 
 passport.use(
   "userStrategy",
@@ -39,8 +40,8 @@ interface Payload {
 
 const generateJwtToken = (
   payload: Payload,
-  res: any,
-  responseData: any
+  res: Response,
+  responseData: User
 ): void => {
   const token = jwt.sign(payload, jwtOptions.secretOrKey);
   new SuccessResponse("User Data", { token, user: responseData }).send(res);

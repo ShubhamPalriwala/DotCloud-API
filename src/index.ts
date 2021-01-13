@@ -4,6 +4,12 @@ import app from "./app";
 
 import "./database";
 
+declare module "express-serve-static-core" {
+  export interface Request {
+    userInfo?: import("./database/models/user.model").default;
+  }
+}
+
 const port = process.env.PORT || "8000";
 
 app

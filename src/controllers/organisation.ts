@@ -24,12 +24,13 @@ class organisationsController {
     }
   };
 
-  createorganisation = async (req: any, res: Response): Promise<void> => {
+  createorganisation = async (req: Request, res: Response): Promise<void> => {
+    const { name, collaborators } = req.body;
     try {
       const organisation = await organisations.create({
-        ownerId: req.user.id,
-        name: req.body.name,
-        collaborators: req.body.collaborators,
+        ownerId: req.userInfo.id,
+        name,
+        collaborators,
       });
       if (organisation) {
         new SuccessResponse("Organisation created!", organisation).send(res);
@@ -41,16 +42,17 @@ class organisationsController {
     }
   };
 
-  updateorganisation = async (req: any, res: Response): Promise<void> => {
+  updateorganisation = async (req: Request, res: Response): Promise<void> => {
+    const { collaborators, organisationId } = req.body;
     try {
       const organisation = await organisations.update(
         {
-          collaborators: req.body.collaborators,
+          collaborators,
         },
         {
           where: {
-            organisationId: req.body.organisationId,
-            ownerId: req.user.id,
+            organisationId,
+            ownerId: req.userInfo.id,
           },
         }
       );
@@ -66,12 +68,13 @@ class organisationsController {
     }
   };
 
-  deleteorganisation = async (req: any, res: Response): Promise<void> => {
+  deleteorganisation = async (req: Request, res: Response): Promise<void> => {
+    const { organisationId } = req.body;
     try {
       const organisation = await organisations.destroy({
         where: {
-          organisationId: req.body.organisationId,
-          ownerId: req.user.id,
+          organisationId,
+          ownerId: req.userInfo.id,
         },
       });
       if (organisation) {
