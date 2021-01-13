@@ -1,4 +1,10 @@
 import { Request, Response } from "express";
+import {
+  SuccessResponse,
+  NotFoundResponse,
+  InternalErrorResponse,
+  FailureMsgResponse,
+} from "../core/ApiResponse";
 import organisations from "../database/models/organisation.model";
 
 class organisationsController {
@@ -9,12 +15,12 @@ class organisationsController {
         where: { organisationId },
       });
       if (organisation) {
-        res.send(organisation);
+        new SuccessResponse("Organisation Found!", organisation).send(res);
       } else {
-        res.send("No organisations found");
+        new NotFoundResponse("No such rganisation found!").send(res);
       }
     } catch (error) {
-      res.send(`Error due to ${error}`);
+      new InternalErrorResponse("Cannot fetch the requested key").send(res);
     }
   };
 
@@ -26,12 +32,12 @@ class organisationsController {
         collaborators: req.body.collaborators,
       });
       if (organisation) {
-        res.send(organisation);
+        new SuccessResponse("Organisation created!", organisation).send(res);
       } else {
-        res.send("organisation created!");
+        new FailureMsgResponse("Unable to create organisation").send(res);
       }
     } catch (error) {
-      res.send(`Error due to ${error}`);
+      new InternalErrorResponse("Cannot create the organisation").send(res);
     }
   };
 
@@ -49,12 +55,14 @@ class organisationsController {
         }
       );
       if (organisation[0]) {
-        res.send("organisation Updated!");
+        new SuccessResponse("Organisation updated!", "").send(res);
       } else {
-        res.send("No organisations found");
+        new NotFoundResponse("No such organisation found!").send(res);
       }
     } catch (error) {
-      res.send(`Error due to ${error}`);
+      new InternalErrorResponse(
+        "Cannot udpate the requested organisation"
+      ).send(res);
     }
   };
 
@@ -67,12 +75,14 @@ class organisationsController {
         },
       });
       if (organisation) {
-        res.send("Deleted!");
+        new SuccessResponse("Organisation Deleted!", "").send(res);
       } else {
-        res.send("unable to delete!");
+        new FailureMsgResponse("Unable to delete organisation").send(res);
       }
     } catch (error) {
-      res.send(`Error due to ${error}`);
+      new InternalErrorResponse("Cannot delete the request organisation").send(
+        res
+      );
     }
   };
 }

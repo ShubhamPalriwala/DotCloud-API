@@ -7,8 +7,6 @@ import {
   AutoIncrement,
   ForeignKey,
   BelongsTo,
-  NotNull,
-  AllowNull,
 } from "sequelize-typescript";
 import Projects from "./projects.model";
 import User from "./user.model";

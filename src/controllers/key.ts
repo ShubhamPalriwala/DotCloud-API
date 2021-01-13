@@ -2,8 +2,8 @@ import { Request, Response } from "express";
 import {
   NotFoundResponse,
   ForbiddenResponse,
-  SuccessResponse,
   InternalErrorResponse,
+  SuccessResponse,
   FailureMsgResponse,
 } from "../core/ApiResponse";
 import Projects from "../database/models/projects.model";
@@ -74,16 +74,16 @@ class KeysController {
     try {
       const key = await Keys.findAll({ where: { projectId } });
       if (key) {
-        res.send(
-          this.isAuthorised(key[0].projectId, token as string)
-            ? key
-            : "Unauthorised"
-        );
+        if (this.isAuthorised(key[0].project, token as string)) {
+          new SuccessResponse("Key Found!", key).send(res);
+        } else {
+          new ForbiddenResponse("You do not have access to this key").send(res);
+        }
       } else {
-        res.send("No keys found for project!");
+        new NotFoundResponse("No keys found for this project!").send(res);
       }
     } catch (error) {
-      res.send("Error fetching project keys!");
+      new InternalErrorResponse("Error fetching the requested keys!").send(res);
     }
   };
 

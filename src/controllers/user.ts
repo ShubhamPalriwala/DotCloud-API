@@ -1,4 +1,10 @@
 import { Request, Response } from "express";
+import {
+  AuthFailureResponse,
+  InternalErrorResponse,
+  SuccessResponse,
+  ForbiddenResponse,
+} from "../core/ApiResponse";
 import User from "../database/models/user.model";
 
 import authMiddleware from "../middleware/authentication";
@@ -12,9 +18,9 @@ class userController {
         password: req.body.password,
         phone: req.body.phone,
       });
-      res.send(user);
+      new SuccessResponse("User has been created!", user).send(res);
     } catch (error) {
-      res.send(error);
+      new InternalErrorResponse("Error signing up user!").send(res);
     }
   };
 
@@ -27,13 +33,13 @@ class userController {
         },
       });
       if (user === null) {
-        res.send({ message: "signup or check password" });
+        new AuthFailureResponse("Sign up or check password!").send(res);
       } else {
         const payload = { username: user.username };
         authMiddleware.generateJwtToken(payload, res, user);
       }
     } catch (error) {
-      res.send(error);
+      new ForbiddenResponse("Error on user login!").send(res);
     }
   };
 
@@ -42,9 +48,9 @@ class userController {
       const user = await User.findOne({
         where: { username: req.user.username },
       });
-      res.send(user);
+      new SuccessResponse("Found user!", user).send(res);
     } catch (error) {
-      res.send(error);
+      new InternalErrorResponse("Error updating the key!").send(res);
     }
   };
 }
