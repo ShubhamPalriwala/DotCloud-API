@@ -31,9 +31,14 @@ app.use(morgan("tiny"));
 app.get("/", (req, res) => {
   res.send("Up and running 😎");
 });
+
+const userAuthMiddleware = passport.authenticate("userStrategy", {
+  session: false,
+});
+
 app.use("/user", userRouter);
-app.use(projectsRouter);
-app.use(organisationRouter);
-app.use(keysRouter);
+app.use("/projects", userAuthMiddleware, projectsRouter);
+app.use("/organisation", userAuthMiddleware, organisationRouter);
+app.use("/keys", userAuthMiddleware, keysRouter);
 
 export default app;

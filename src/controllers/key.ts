@@ -27,6 +27,7 @@ class KeysController {
         new NotFoundResponse("No such key found!").send(res);
       }
     } catch (error) {
+      console.log(error);
       new InternalErrorResponse("Cannot fetch the requested key").send(res);
     }
   };
@@ -35,7 +36,7 @@ class KeysController {
     const { projectId, key, value, collaborators } = req.body;
     try {
       const newKey = await Keys.create({
-        creatorId: req.userInfo.id,
+        creatorId: req.user.id,
         projectId,
         key,
         value,
@@ -43,6 +44,7 @@ class KeysController {
       });
       if (newKey) {
         new SuccessResponse("Key Created!", newKey).send(res);
+        return;
       }
       throw Error("Unwanted error!");
     } catch (error) {
@@ -58,7 +60,7 @@ class KeysController {
           value,
         },
         {
-          where: { keyId, creatorId: req.userInfo.id },
+          where: { keyId, creatorId: req.user.id },
         }
       );
       if (key[0]) {
@@ -75,7 +77,7 @@ class KeysController {
     const { keyId } = req.query;
     try {
       const key = await Keys.destroy({
-        where: { keyId, creatorId: req.userInfo.id },
+        where: { keyId, creatorId: req.user.id },
       });
       if (key) {
         new SuccessResponse("Key has been deleted!", "").send(res);

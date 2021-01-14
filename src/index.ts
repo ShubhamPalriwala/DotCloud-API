@@ -6,7 +6,7 @@ import "./database";
 
 declare module "express-serve-static-core" {
   export interface Request {
-    userInfo?: import("./database/models/user.model").default;
+    user?: import("./database/models/user.model").default;
   }
 }
 

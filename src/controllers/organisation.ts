@@ -28,7 +28,7 @@ class organisationsController {
     const { name, collaborators } = req.body;
     try {
       const organisation = await organisations.create({
-        ownerId: req.userInfo.id,
+        ownerId: req.user.id,
         name,
         collaborators,
       });
@@ -52,7 +52,7 @@ class organisationsController {
         {
           where: {
             organisationId,
-            ownerId: req.userInfo.id,
+            ownerId: req.user.id,
           },
         }
       );
@@ -74,7 +74,7 @@ class organisationsController {
       const organisation = await organisations.destroy({
         where: {
           organisationId,
-          ownerId: req.userInfo.id,
+          ownerId: req.user.id,
         },
       });
       if (organisation) {

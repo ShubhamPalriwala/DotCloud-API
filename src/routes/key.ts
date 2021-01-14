@@ -4,10 +4,10 @@ import KeysController from "../controllers/key";
 const keysRouter = Router();
 const keysController = new KeysController();
 
-keysRouter.get("/keys/all", keysController.fetchProjectKeys);
-keysRouter.get("/keys", keysController.fetchKey);
-keysRouter.post("/keys", keysController.createKey);
-keysRouter.put("/keys", keysController.updateKey);
-keysRouter.delete("/keys", keysController.deleteKey);
+keysRouter.get("/all", keysController.fetchProjectKeys);
+keysRouter.get("/", keysController.fetchKey);
+keysRouter.post("/", keysController.createKey);
+keysRouter.put("/", keysController.updateKey);
+keysRouter.delete("/", keysController.deleteKey);
 
 export default keysRouter;

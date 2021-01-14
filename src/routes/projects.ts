@@ -4,9 +4,9 @@ import ProjectsController from "../controllers/projects";
 const projectsRouter = Router();
 const projectsController = new ProjectsController();
 
-projectsRouter.get("/projects", projectsController.fetchProject);
-projectsRouter.put("/projects", projectsController.updateProject);
-projectsRouter.post("/projects", projectsController.createProject);
-projectsRouter.delete("/projects", projectsController.deleteProject);
+projectsRouter.get("/", projectsController.fetchProject);
+projectsRouter.put("/", projectsController.updateProject);
+projectsRouter.post("/", projectsController.createProject);
+projectsRouter.delete("/", projectsController.deleteProject);
 
 export default projectsRouter;
