@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import uuid from "uuid-random";
 import {
   SuccessResponse,
   NotFoundResponse,
@@ -26,7 +27,11 @@ class ProjectsController {
 
   createProject = async (req: Request, res: Response): Promise<void> => {
     try {
-      const project = await Projects.create(req.body);
+      const generatedToken = uuid();
+      const project = await Projects.create({
+        token: generatedToken,
+        owner: req.user.id,
+      });
       if (project) {
         new SuccessResponse("Project Created!", project).send(res);
       } else {
@@ -34,6 +39,24 @@ class ProjectsController {
       }
     } catch (error) {
       new InternalErrorResponse("Error creating this Project!").send(res);
+    }
+  };
+
+  generateNewToken = async (req: Request, res: Response): Promise<void> => {
+    const { projectId } = req.body;
+    const token = uuid();
+    try {
+      const projectUpdate = await Projects.update(
+        { token },
+        { where: { projectId, owner: req.user.id } }
+      );
+      if (projectUpdate[0]) {
+        new SuccessResponse("Project updated!", { token }).send(res);
+      } else {
+        new NotFoundResponse("No such Project found!").send(res);
+      }
+    } catch (error) {
+      new InternalErrorResponse("Error updating the Project!").send(res);
     }
   };
 

@@ -33,7 +33,7 @@ class Projects extends Model<Projects> {
   name: string;
 
   @Unique
-  @Column
+  @Column({ type: DataType.UUID })
   token: string;
 
   @ForeignKey(() => User)
