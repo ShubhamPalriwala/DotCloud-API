@@ -1,8 +1,13 @@
-import app from "./app";
+/* eslint-disable import/first */
 /* eslint-disable import/extensions */
 /* eslint-disable import/no-unresolved */
 
+import * as dotenv from "dotenv";
+
+dotenv.config();
+
 import "./database";
+import app from "./app";
 
 declare module "express-serve-static-core" {
   export interface Request {
