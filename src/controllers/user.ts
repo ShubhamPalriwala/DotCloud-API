@@ -33,7 +33,9 @@ class userController {
         },
       });
       if (user === null) {
-        new AuthFailureResponse("Sign up or check password!").send(res);
+        new AuthFailureResponse(
+          "Please check your password otherwise Sign Up first!"
+        ).send(res);
       } else {
         const payload = { username: user.username };
         authMiddleware.generateJwtToken(payload, res, user);

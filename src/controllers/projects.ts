@@ -18,7 +18,9 @@ class ProjectsController {
         new NotFoundResponse("No Project found!").send(res);
       }
     } catch (error) {
-      new InternalErrorResponse("Cannot fetch the requested key").send(res);
+      new InternalErrorResponse("Error fetching the requested Project!").send(
+        res
+      );
     }
   };
 
@@ -26,12 +28,12 @@ class ProjectsController {
     try {
       const project = await Projects.create(req.body);
       if (project) {
-        new SuccessResponse("Project Created", project).send(res);
+        new SuccessResponse("Project Created!", project).send(res);
       } else {
-        new FailureMsgResponse("Cannot create project!").send(res);
+        new FailureMsgResponse("Cannot create Project!").send(res);
       }
     } catch (error) {
-      new InternalErrorResponse("Cannot fetch the requested key").send(res);
+      new InternalErrorResponse("Error creating this Project!").send(res);
     }
   };
 
@@ -42,12 +44,12 @@ class ProjectsController {
         where: { projectId },
       });
       if (project[0]) {
-        new SuccessResponse("Project Updated", project).send(res);
+        new SuccessResponse("Project Updated!", project).send(res);
       } else {
-        new FailureMsgResponse("Cannot update this project").send(res);
+        new FailureMsgResponse("Cannot update this Project!").send(res);
       }
     } catch (error) {
-      new InternalErrorResponse("Cannot fetch the requested key").send(res);
+      new InternalErrorResponse("Error updating the Project!").send(res);
     }
   };
 
@@ -58,10 +60,10 @@ class ProjectsController {
       if (project) {
         new SuccessResponse("Project Deleted!", "").send(res);
       } else {
-        new FailureMsgResponse("Unable to delte the project!").send(res);
+        new FailureMsgResponse("Cannot delete the Project!").send(res);
       }
     } catch (error) {
-      new InternalErrorResponse("Cannot fetch the requested key").send(res);
+      new InternalErrorResponse("Error deleting the Project!").send(res);
     }
   };
 }

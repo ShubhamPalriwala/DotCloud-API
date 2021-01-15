@@ -17,10 +17,10 @@ class organisationsController {
       if (organisation) {
         new SuccessResponse("Organisation Found!", organisation).send(res);
       } else {
-        new NotFoundResponse("No such rganisation found!").send(res);
+        new NotFoundResponse("No such Organisation found!").send(res);
       }
     } catch (error) {
-      new InternalErrorResponse("Cannot fetch the requested key").send(res);
+      new InternalErrorResponse("Error fetching the requested key!").send(res);
     }
   };
 
@@ -35,10 +35,10 @@ class organisationsController {
       if (organisation) {
         new SuccessResponse("Organisation created!", organisation).send(res);
       } else {
-        new FailureMsgResponse("Unable to create organisation").send(res);
+        new FailureMsgResponse("Unable to create Organisation!").send(res);
       }
     } catch (error) {
-      new InternalErrorResponse("Cannot create the organisation").send(res);
+      new InternalErrorResponse("Error creating the Organisation!").send(res);
     }
   };
 
@@ -59,17 +59,15 @@ class organisationsController {
       if (organisation[0]) {
         new SuccessResponse("Organisation updated!", "").send(res);
       } else {
-        new NotFoundResponse("No such organisation found!").send(res);
+        new NotFoundResponse("No such Organisation found!").send(res);
       }
     } catch (error) {
-      new InternalErrorResponse(
-        "Cannot udpate the requested organisation"
-      ).send(res);
+      new InternalErrorResponse("Error updating the organisation!").send(res);
     }
   };
 
   deleteorganisation = async (req: Request, res: Response): Promise<void> => {
-    const { organisationId } = req.body;
+    const { organisationId } = req.query;
     try {
       const organisation = await organisations.destroy({
         where: {
@@ -80,12 +78,10 @@ class organisationsController {
       if (organisation) {
         new SuccessResponse("Organisation Deleted!", "").send(res);
       } else {
-        new FailureMsgResponse("Unable to delete organisation").send(res);
+        new FailureMsgResponse("Unable to delete Organisation!").send(res);
       }
     } catch (error) {
-      new InternalErrorResponse("Cannot delete the request organisation").send(
-        res
-      );
+      new InternalErrorResponse("Error deleting the Organisation!").send(res);
     }
   };
 }

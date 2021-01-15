@@ -21,14 +21,15 @@ class KeysController {
         if (this.isAuthorised(key.project, token as string)) {
           new SuccessResponse("Key Found!", key).send(res);
         } else {
-          new ForbiddenResponse("You do not have access to this key").send(res);
+          new ForbiddenResponse("You do not have access to this Key!").send(
+            res
+          );
         }
       } else {
-        new NotFoundResponse("No such key found!").send(res);
+        new NotFoundResponse("No such Key found!").send(res);
       }
     } catch (error) {
-      console.log(error);
-      new InternalErrorResponse("Cannot fetch the requested key").send(res);
+      new InternalErrorResponse("Cannot fetch the requested Key!").send(res);
     }
   };
 
@@ -66,7 +67,7 @@ class KeysController {
       if (key[0]) {
         new SuccessResponse("Key has been updated!", "").send(res);
       } else {
-        new FailureMsgResponse("Key not updated!").send(res);
+        new FailureMsgResponse("Key could not be updated!").send(res);
       }
     } catch (error) {
       new InternalErrorResponse("Error updating the key!").send(res);
@@ -90,12 +91,17 @@ class KeysController {
   fetchProjectKeys = async (req: Request, res: Response): Promise<void> => {
     const { projectId, token } = req.query;
     try {
-      const key = await Keys.findAll({ where: { projectId } });
+      const key = await Keys.findAll({
+        include: [Projects],
+        where: { projectId },
+      });
       if (key) {
         if (this.isAuthorised(key[0].project, token as string)) {
           new SuccessResponse("Key Found!", key).send(res);
         } else {
-          new ForbiddenResponse("You do not have access to this key").send(res);
+          new ForbiddenResponse("You do not have access to these keys!").send(
+            res
+          );
         }
       } else {
         new NotFoundResponse("No keys found for this project!").send(res);
