@@ -9,9 +9,9 @@ dotenv.config();
 import "./database";
 import app from "./app";
 
-declare module "express-serve-static-core" {
+declare module "express" {
   export interface Request {
-    user?: import("./database/models/user.model").default;
+    user?: any;
   }
 }
 
