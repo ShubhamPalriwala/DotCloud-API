@@ -39,6 +39,6 @@ const userAuthMiddleware = passport.authenticate("userStrategy", {
 app.use("/user", userRouter);
 app.use("/projects", userAuthMiddleware, projectsRouter);
 app.use("/organisation", userAuthMiddleware, organisationRouter);
-app.use("/keys", userAuthMiddleware, keysRouter);
+app.use("/keys", keysRouter);
 
 export default app;

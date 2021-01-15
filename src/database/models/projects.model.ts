@@ -6,7 +6,6 @@ import {
   Unique,
   DataType,
   HasMany,
-  BelongsToMany,
   ForeignKey,
   PrimaryKey,
   AutoIncrement,

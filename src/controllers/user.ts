@@ -18,7 +18,10 @@ class userController {
         password: req.body.password,
         phone: req.body.phone,
       });
-      new SuccessResponse("User has been created!", user).send(res);
+      new SuccessResponse("User has been created!", {
+        uesrname: user.username,
+        email: user.email,
+      }).send(res);
     } catch (error) {
       new InternalErrorResponse("Error signing up user!").send(res);
     }
@@ -27,6 +30,7 @@ class userController {
   userLogin = async (req: Request, res: Response): Promise<void> => {
     try {
       const user = await User.findOne({
+        attributes: ["username", "email"],
         where: {
           email: req.body.email,
           password: req.body.password,
