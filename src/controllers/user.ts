@@ -1,3 +1,4 @@
+import uuid from "uuid-random";
 import { Request, Response } from "express";
 import {
   AuthFailureResponse,
@@ -11,9 +12,11 @@ import authMiddleware from "../middleware/authentication";
 
 class userController {
   userSignUp = async (req: Request, res: Response): Promise<void> => {
+    const generatedToken = uuid();
     try {
       const { username, email, password, phone } = req.body;
       const user = await User.create({
+        tokenn: generatedToken,
         username,
         email,
         password,

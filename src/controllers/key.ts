@@ -5,41 +5,53 @@ import {
   InternalErrorResponse,
   SuccessResponse,
   FailureMsgResponse,
+  BadRequestResponse,
 } from "../core/ApiResponse";
 import Projects from "../database/models/projects.model";
 import Keys from "../database/models/keys.model";
+import User from "../database/models/user.model";
 
 class KeysController {
   fetchKey = async (req: Request, res: Response): Promise<void> => {
-    const { keyId, token } = req.query;
+    const { keyName, token } = req.query;
     try {
-      const key = await Keys.findOne({
-        include: [Projects],
-        where: { keyId },
+      const projectScopedKey = Keys.scope({ method: ["projectKey", token] });
+      const userScopedKey = Keys.scope({ method: ["userToken", token] });
+      let results;
+      results = await projectScopedKey.findOne({
+        where: { keyName },
       });
-      if (key) {
-        if (this.isAuthorised(key.project, token as string)) {
-          new SuccessResponse("Key Found!", key).send(res);
-        } else {
-          new ForbiddenResponse("You do not have access to this Key!").send(
-            res
-          );
+      if (!results) {
+        results = await userScopedKey.findOne({
+          where: { keyName },
+        });
+        if (!results) {
+          new NotFoundResponse("No such Key found!").send(res);
         }
+      }
+      if (
+        this.isAuthorised(results?.project ?? results.user, token as string)
+      ) {
+        new SuccessResponse("Key Found!", results).send(res);
       } else {
-        new NotFoundResponse("No such Key found!").send(res);
+        new ForbiddenResponse("You do not have access to this Key!").send(res);
       }
     } catch (error) {
+      if (error.toString().includes("invalid input syntax for type uuid")) {
+        new BadRequestResponse("Invalid Token").send(res);
+        return;
+      }
       new InternalErrorResponse("Cannot fetch the requested Key!").send(res);
     }
   };
 
   createKey = async (req: Request, res: Response): Promise<void> => {
-    const { projectId, key, value, collaborators } = req.body;
+    const { projectId, keyName, value, collaborators } = req.body;
     try {
       const newKey = await Keys.create({
         creatorId: req.user.id,
         projectId,
-        key,
+        keyName,
         value,
         collaborators,
       });
@@ -49,6 +61,7 @@ class KeysController {
       }
       throw Error("Unwanted error!");
     } catch (error) {
+      console.log(error);
       new InternalErrorResponse("Error creating the key!").send(res);
     }
   };
@@ -111,7 +124,7 @@ class KeysController {
     }
   };
 
-  isAuthorised = (project: Projects, token: string): boolean => {
+  isAuthorised = (project: Projects | User, token: string): boolean => {
     if (project.token === token) {
       return true;
     }

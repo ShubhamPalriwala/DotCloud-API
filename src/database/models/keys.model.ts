@@ -7,10 +7,23 @@ import {
   AutoIncrement,
   ForeignKey,
   BelongsTo,
+  Scopes,
 } from "sequelize-typescript";
 import Projects from "./projects.model";
 import User from "./user.model";
 
+@Scopes(() => ({
+  projectKey(token) {
+    return {
+      include: [{ model: Projects, where: { token } }],
+    };
+  },
+  userToken(token) {
+    return {
+      include: [{ model: User, where: { token } }],
+    };
+  },
+}))
 @Table
 class Keys extends Model<Keys> {
   @PrimaryKey
@@ -36,7 +49,7 @@ class Keys extends Model<Keys> {
   project: Projects;
 
   @Column
-  key: string;
+  keyName: string;
 
   @Column
   value: string;
