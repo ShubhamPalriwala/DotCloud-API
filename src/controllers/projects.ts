@@ -5,16 +5,29 @@ import {
   NotFoundResponse,
   InternalErrorResponse,
   FailureMsgResponse,
+  ForbiddenResponse,
 } from "../core/ApiResponse";
 import Projects from "../database/models/projects.model";
 
 class ProjectsController {
   fetchProject = async (req: Request, res: Response): Promise<void> => {
-    const { projectId } = req.query;
     try {
+      const { projectId } = req.query;
+      const userId = req.user.id;
       const project = await Projects.findOne({ where: { projectId } });
       if (project) {
-        new SuccessResponse("Project Found!", project).send(res);
+        if (userId === project.owner) {
+          new SuccessResponse("Project Found!", project).send(res);
+        } else if (
+          project.collaborators != null &&
+          project.collaborators.includes(`${userId}`)
+        ) {
+          new SuccessResponse("Project Found!", project).send(res);
+        } else {
+          new ForbiddenResponse("You do not have access to this Project!").send(
+            res
+          );
+        }
       } else {
         new NotFoundResponse("No Project found!").send(res);
       }
@@ -27,10 +40,14 @@ class ProjectsController {
 
   createProject = async (req: Request, res: Response): Promise<void> => {
     try {
+      const {name, collaborators, organisation} = req.body;
       const generatedToken = uuid();
       const project = await Projects.create({
         token: generatedToken,
         owner: req.user.id,
+        name,
+        collaborators,
+        organisation,
       });
       if (project) {
         new SuccessResponse("Project Created!", project).send(res);
@@ -43,12 +60,14 @@ class ProjectsController {
   };
 
   generateNewToken = async (req: Request, res: Response): Promise<void> => {
-    const { projectId } = req.body;
-    const token = uuid();
     try {
+      const { projectId } = req.body;
+      const userId = req.user.id;
+      const token = uuid();
+
       const projectUpdate = await Projects.update(
         { token },
-        { where: { projectId, owner: req.user.id } }
+        { where: { projectId, owner: userId } }
       );
       if (projectUpdate[0]) {
         new SuccessResponse("Project updated!", { token }).send(res);
@@ -61,11 +80,17 @@ class ProjectsController {
   };
 
   updateProject = async (req: Request, res: Response): Promise<void> => {
-    const { projectId } = req.body;
     try {
-      const project = await Projects.update(req.body, {
-        where: { projectId },
-      });
+      const { projectId, collaborators } = req.body;
+      const userId = req.user.id;
+      const project = await Projects.update(
+        {
+          collaborators,
+        },
+        {
+          where: { projectId, owner: userId },
+        }
+      );
       if (project[0]) {
         new SuccessResponse("Project Updated!", project).send(res);
       } else {
@@ -77,9 +102,13 @@ class ProjectsController {
   };
 
   deleteProject = async (req: Request, res: Response): Promise<void> => {
-    const { projectId } = req.query;
     try {
-      const project = await Projects.destroy({ where: { projectId } });
+      const { projectId } = req.query;
+      const userId = req.user.id;
+
+      const project = await Projects.destroy({
+        where: { projectId, owner: userId },
+      });
       if (project) {
         new SuccessResponse("Project Deleted!", "").send(res);
       } else {

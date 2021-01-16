@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import {
   SuccessResponse,
   NotFoundResponse,
+  ForbiddenResponse,
   InternalErrorResponse,
   FailureMsgResponse,
 } from "../core/ApiResponse";
@@ -9,13 +10,22 @@ import organisations from "../database/models/organisation.model";
 
 class organisationsController {
   fetchorganisation = async (req: Request, res: Response): Promise<void> => {
-    const { organisationId } = req.query;
     try {
+      const { organisationId } = req.query;
+      const userId = req.user.id;
       const organisation = await organisations.findOne({
         where: { organisationId },
       });
       if (organisation) {
-        new SuccessResponse("Organisation Found!", organisation).send(res);
+        if (userId === organisation.ownerId) {
+          new SuccessResponse("Organisation Found!", organisation).send(res);
+        } else if (organisation.collaborators.includes(`${userId}`)) {
+          new SuccessResponse("Organisation Found!", organisation).send(res);
+        } else {
+          new ForbiddenResponse(
+            "You do not have access to this Organisation!"
+          ).send(res);
+        }
       } else {
         new NotFoundResponse("No such Organisation found!").send(res);
       }
@@ -25,10 +35,12 @@ class organisationsController {
   };
 
   createorganisation = async (req: Request, res: Response): Promise<void> => {
-    const { name, collaborators } = req.body;
     try {
+      const { name, collaborators } = req.body;
+      const userId = req.user.id;
+
       const organisation = await organisations.create({
-        ownerId: req.user.id,
+        ownerId: userId,
         name,
         collaborators,
       });
@@ -43,8 +55,10 @@ class organisationsController {
   };
 
   updateorganisation = async (req: Request, res: Response): Promise<void> => {
-    const { collaborators, organisationId } = req.body;
     try {
+      const { collaborators, organisationId } = req.body;
+      const userId = req.user.id;
+
       const organisation = await organisations.update(
         {
           collaborators,
@@ -52,7 +66,7 @@ class organisationsController {
         {
           where: {
             organisationId,
-            ownerId: req.user.id,
+            ownerId: userId,
           },
         }
       );
@@ -67,12 +81,13 @@ class organisationsController {
   };
 
   deleteorganisation = async (req: Request, res: Response): Promise<void> => {
-    const { organisationId } = req.query;
     try {
+      const { organisationId } = req.query;
+      const userId = req.user.id;
       const organisation = await organisations.destroy({
         where: {
           organisationId,
-          ownerId: req.user.id,
+          ownerId: userId,
         },
       });
       if (organisation) {

@@ -12,11 +12,12 @@ import authMiddleware from "../middleware/authentication";
 class userController {
   userSignUp = async (req: Request, res: Response): Promise<void> => {
     try {
+      const { username, email, password, phone } = req.body;
       const user = await User.create({
-        username: req.body.username,
-        email: req.body.email,
-        password: req.body.password,
-        phone: req.body.phone,
+        username,
+        email,
+        password,
+        phone,
       });
       new SuccessResponse("User has been created!", {
         uesrname: user.username,
@@ -29,11 +30,13 @@ class userController {
 
   userLogin = async (req: Request, res: Response): Promise<void> => {
     try {
+      const { email, password } = req.body;
+
       const user = await User.findOne({
         attributes: ["username", "email"],
         where: {
-          email: req.body.email,
-          password: req.body.password,
+          email,
+          password,
         },
       });
       if (user === null) {
@@ -51,12 +54,14 @@ class userController {
 
   userRead = async (req: Request, res: Response): Promise<void> => {
     try {
+      const { username } = req.user;
+
       const user = await User.findOne({
-        where: { username: req.user.username },
+        where: { username },
       });
       new SuccessResponse("Found user!", user).send(res);
     } catch (error) {
-      new InternalErrorResponse("Error updating the key!").send(res);
+      new InternalErrorResponse("Error reading user Profile!").send(res);
     }
   };
 }
