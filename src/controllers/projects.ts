@@ -40,13 +40,14 @@ class ProjectsController {
 
   createProject = async (req: Request, res: Response): Promise<void> => {
     try {
+      const {name, collaborators, organisation} = req.body;
       const generatedToken = uuid();
       const project = await Projects.create({
         token: generatedToken,
         owner: req.user.id,
-        name: req.body.name,
-        collaborators: req.body.collaborators,
-        organisation: req.body.organisation,
+        name,
+        collaborators,
+        organisation,
       });
       if (project) {
         new SuccessResponse("Project Created!", project).send(res);
