@@ -1,4 +1,3 @@
-import { log } from "console";
 import { Request, Response } from "express";
 import {
   SuccessResponse,
