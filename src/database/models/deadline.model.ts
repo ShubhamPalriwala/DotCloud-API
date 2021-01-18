@@ -6,7 +6,6 @@ import {
   ForeignKey,
   BelongsTo,
   Scopes,
-  DataType,
 } from "sequelize-typescript";
 import { DataTypes, Op } from "sequelize";
 import moment from "moment-timezone";
@@ -16,10 +15,11 @@ import User from "./user.model";
 moment.tz.setDefault("Asia/Calcutta");
 
 @Scopes(() => ({
-  isValidDeadline(projectId) {
+  isValidDeadline(projectId, user) {
     const date = moment().toDate();
     return {
       where: {
+        user,
         deadline: { [Op.gte]: date },
         projectId,
       },

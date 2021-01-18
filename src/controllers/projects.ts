@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import moment from "moment-timezone";
 import uuid from "uuid-random";
 import {
   SuccessResponse,
@@ -8,6 +9,13 @@ import {
   ForbiddenResponse,
 } from "../core/ApiResponse";
 import Projects from "../database/models/projects.model";
+import Deadline from "../database/models/deadline.model";
+
+interface DeadlineInsertion {
+  deadline: Date;
+  user: number;
+  projectId: number;
+}
 
 class ProjectsController {
   fetchProject = async (req: Request, res: Response): Promise<void> => {
@@ -40,7 +48,7 @@ class ProjectsController {
 
   createProject = async (req: Request, res: Response): Promise<void> => {
     try {
-      const { name, collaborators, organisation } = req.body;
+      const { name, collaborators, organisation, deadline } = req.body;
       const generatedToken = uuid();
       const project = await Projects.create({
         token: generatedToken,
@@ -49,12 +57,39 @@ class ProjectsController {
         collaborators,
         organisation,
       });
+      if (deadline) {
+        const deadlinesList: DeadlineInsertion[] = [];
+        collaborators.map((colId: string) => {
+          const creation: DeadlineInsertion = {
+            user: parseInt(colId, 10),
+            deadline: moment(new Date(deadline)).toDate(),
+            projectId: project.projectId,
+          };
+          deadlinesList.push(creation);
+          return collaborators;
+        });
+        const bulkDeadlineCreation = await Deadline.bulkCreate(deadlinesList, {
+          returning: ["user"],
+        });
+        if (bulkDeadlineCreation.length === 0) {
+          new FailureMsgResponse("Cannot update such collaborators").send(res);
+          return;
+        }
+      }
       if (project) {
         new SuccessResponse("Project Created!", project).send(res);
       } else {
         new FailureMsgResponse("Cannot create Project!").send(res);
       }
     } catch (error) {
+      if (
+        error
+          .toString()
+          .includes("SequelizeForeignKeyConstraintError: insert or update")
+      ) {
+        new NotFoundResponse("No such user found!").send(res);
+        return;
+      }
       new InternalErrorResponse("Error creating this Project!").send(res);
     }
   };
@@ -81,7 +116,7 @@ class ProjectsController {
 
   updateProject = async (req: Request, res: Response): Promise<void> => {
     try {
-      const { projectId, collaborators } = req.body;
+      const { projectId, collaborators, deadline } = req.body;
       const userId = req.user.id;
       const project = await Projects.update(
         {
@@ -91,6 +126,25 @@ class ProjectsController {
           where: { projectId, owner: userId },
         }
       );
+      if (deadline) {
+        const deadlinesList: DeadlineInsertion[] = [];
+        collaborators.map((colId: string) => {
+          const creation: DeadlineInsertion = {
+            user: parseInt(colId, 10),
+            deadline: moment(new Date(deadline)).toDate(),
+            projectId,
+          };
+          deadlinesList.push(creation);
+          return collaborators;
+        });
+        const bulkDeadlineCreation = await Deadline.bulkCreate(deadlinesList, {
+          returning: ["userId"],
+        });
+        if (bulkDeadlineCreation.length === 0) {
+          new FailureMsgResponse("Cannot update such collaborators").send(res);
+          return;
+        }
+      }
       if (project[0]) {
         new SuccessResponse("Project Updated!", project).send(res);
       } else {

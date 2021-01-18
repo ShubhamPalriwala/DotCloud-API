@@ -26,8 +26,13 @@ class KeysController {
         results = await userScopedKey.findOne({
           where: { keyName },
         });
+
         const deadLineScope = await Deadline.scope({
-          method: ["isValidDeadline", results.project.projectId],
+          method: [
+            "isValidDeadline",
+            results.project.projectId,
+            results.user.id,
+          ],
         }).findAll();
         if (deadLineScope.length === 0) {
           new ForbiddenResponse("You don't have access to this key!").send(res);
@@ -38,7 +43,7 @@ class KeysController {
         }
       }
       if (
-        this.isAuthorised(results?.project ?? results.user, token as string)
+        this.isAuthorised(results?.user ?? results?.project, token as string)
       ) {
         new SuccessResponse("Key Found!", results).send(res);
       } else {
@@ -49,7 +54,6 @@ class KeysController {
         new BadRequestResponse("Invalid Token").send(res);
         return;
       }
-      console.log(error);
       new InternalErrorResponse("Cannot fetch the requested Key!").send(res);
     }
   };
@@ -131,7 +135,6 @@ class KeysController {
         new NotFoundResponse("No keys found for this project!").send(res);
       }
     } catch (error) {
-      console.log(error);
       new InternalErrorResponse("Error fetching the requested keys!").send(res);
     }
   };
