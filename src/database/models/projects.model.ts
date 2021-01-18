@@ -11,6 +11,7 @@ import {
   AutoIncrement,
   BelongsTo,
 } from "sequelize-typescript";
+import Deadline from "./deadline.model";
 import Keys from "./keys.model";
 import Organisation from "./organisation.model";
 import User from "./user.model";
@@ -46,6 +47,9 @@ class Projects extends Model<Projects> {
 
   @BelongsTo(() => User)
   owners: User[];
+
+  @HasMany(() => Deadline)
+  deadline: Deadline[];
 }
 
 export default Projects;

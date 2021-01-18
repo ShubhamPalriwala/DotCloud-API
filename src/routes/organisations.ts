@@ -1,5 +1,4 @@
 import { Router } from "express";
-import passport from "passport";
 import OrganisationController from "../controllers/organisation";
 
 const organisationRouter = Router();

@@ -5,10 +5,14 @@ import {
   Unique,
   HasMany,
   DataType,
+  ForeignKey,
+  PrimaryKey,
+  AutoIncrement,
 } from "sequelize-typescript";
 import * as bcrypt from "bcrypt";
 import Organisation from "./organisation.model";
 import Projects from "./projects.model";
+import Deadline from "./deadline.model";
 
 @Table
 class User extends Model<User> {
@@ -33,6 +37,9 @@ class User extends Model<User> {
 
   @HasMany(() => Projects)
   projects: Projects[];
+
+  @HasMany(() => Deadline)
+  deadline: Deadline[];
 
   @HasMany(() => Organisation)
   organisations: Organisation[];
