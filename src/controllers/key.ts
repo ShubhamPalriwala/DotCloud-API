@@ -101,15 +101,18 @@ class KeysController {
   };
 
   fetchProjectKeys = async (req: Request, res: Response): Promise<void> => {
-    const { projectId, token } = req.query;
+    const { token } = req.query;
     try {
-      const key = await Keys.findAll({
-        include: [Projects],
-        where: { projectId },
-      });
+      const projectScopedKey = Keys.scope({ method: ["projectKey", token] });
+      const key = await projectScopedKey.findAll();
       if (key) {
         if (this.isAuthorised(key[0].project, token as string)) {
-          new SuccessResponse("Key Found!", key).send(res);
+          const keyData: { [k: string]: any } = {};
+          key.map((keys) => {
+            keyData[keys.keyName] = keys.value;
+            return keys;
+          });
+          new SuccessResponse("Key Found!", keyData).send(res);
         } else {
           new ForbiddenResponse("You do not have access to these keys!").send(
             res
@@ -119,6 +122,7 @@ class KeysController {
         new NotFoundResponse("No keys found for this project!").send(res);
       }
     } catch (error) {
+      console.log(error);
       new InternalErrorResponse("Error fetching the requested keys!").send(res);
     }
   };
