@@ -5,15 +5,30 @@ import {
   Model,
   ForeignKey,
   BelongsTo,
-  HasOne,
-  HasMany,
+  Scopes,
+  DataType,
 } from "sequelize-typescript";
+import { DataTypes, Op } from "sequelize";
+import moment from "moment-timezone";
 import Projects from "./projects.model";
 import User from "./user.model";
 
+moment.tz.setDefault("Asia/Calcutta");
+
+@Scopes(() => ({
+  isValidDeadline(projectId) {
+    const date = moment().toDate();
+    return {
+      where: {
+        deadline: { [Op.gte]: date },
+        projectId,
+      },
+    };
+  },
+}))
 @Table
 class Deadline extends Model<Deadline> {
-  @Column
+  @Column({ type: DataTypes.DATE })
   deadline: Date;
 
   @ForeignKey(() => User)

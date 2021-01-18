@@ -40,7 +40,7 @@ class ProjectsController {
 
   createProject = async (req: Request, res: Response): Promise<void> => {
     try {
-      const {name, collaborators, organisation} = req.body;
+      const { name, collaborators, organisation } = req.body;
       const generatedToken = uuid();
       const project = await Projects.create({
         token: generatedToken,

@@ -44,6 +44,7 @@
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "jsonwebtoken": "^8.5.1",
+    "moment-timezone": "^0.5.32",
     "morgan": "^1.10.0",
     "passport": "^0.4.1",
     "passport-jwt": "^4.0.0",
@@ -60,7 +61,7 @@
     }
   },
   "lint-staged": {
-    "*.js": [
+    "*.ts": [
       "./node_modules/.bin/eslint --ignore-path .gitignore . --fix",
       "git add"
     ]

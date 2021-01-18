@@ -10,6 +10,7 @@ import {
 import Projects from "../database/models/projects.model";
 import Keys from "../database/models/keys.model";
 import User from "../database/models/user.model";
+import Deadline from "../database/models/deadline.model";
 
 class KeysController {
   fetchKey = async (req: Request, res: Response): Promise<void> => {
@@ -25,6 +26,13 @@ class KeysController {
         results = await userScopedKey.findOne({
           where: { keyName },
         });
+        const deadLineScope = await Deadline.scope({
+          method: ["isValidDeadline", results.project.projectId],
+        }).findAll();
+        if (deadLineScope.length === 0) {
+          new ForbiddenResponse("You don't have access to this key!").send(res);
+          return;
+        }
         if (!results) {
           new NotFoundResponse("No such Key found!").send(res);
         }
@@ -41,6 +49,7 @@ class KeysController {
         new BadRequestResponse("Invalid Token").send(res);
         return;
       }
+      console.log(error);
       new InternalErrorResponse("Cannot fetch the requested Key!").send(res);
     }
   };

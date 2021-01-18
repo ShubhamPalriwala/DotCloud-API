@@ -21,7 +21,7 @@ import User from "./user.model";
   },
   userToken(token) {
     return {
-      include: [{ model: User, where: { token } }],
+      include: [{ model: User, where: { token } }, Projects],
     };
   },
 }))
