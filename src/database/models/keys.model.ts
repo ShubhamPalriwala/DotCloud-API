@@ -9,6 +9,7 @@ import {
   BelongsTo,
   Scopes,
 } from "sequelize-typescript";
+import CryptoJS from "crypto-js";
 import Projects from "./projects.model";
 import User from "./user.model";
 
@@ -52,7 +53,19 @@ class Keys extends Model<Keys> {
   keyName: string;
 
   @Column
-  value: string;
+  get value(): string {
+    const bytes = CryptoJS.AES.decrypt(
+      this.getDataValue("value"),
+      process.env.ENC_KEY
+    );
+    const decText = bytes.toString(CryptoJS.enc.Utf8);
+    return decText;
+  }
+
+  set value(input: string) {
+    const encText = CryptoJS.AES.encrypt(input, process.env.ENC_KEY).toString();
+    this.setDataValue("value", encText);
+  }
 
   @Column({
     type: DataType.ARRAY(DataType.TEXT),
