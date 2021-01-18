@@ -6,6 +6,7 @@ import {
   HasMany,
   DataType,
 } from "sequelize-typescript";
+import * as bcrypt from "bcrypt";
 import Organisation from "./organisation.model";
 import Projects from "./projects.model";
 
@@ -19,7 +20,12 @@ class User extends Model<User> {
   token: string;
 
   @Column
-  password: string;
+  set password(value: string) {
+    const hash = bcrypt.hashSync(value, 10);
+    this.setDataValue("password", hash);
+  }
+
+  CheckPassword: (password: string) => Promise<boolean>;
 
   @Unique
   @Column
@@ -31,5 +37,14 @@ class User extends Model<User> {
   @HasMany(() => Organisation)
   organisations: Organisation[];
 }
+
+User.prototype.CheckPassword = async function (password: string) {
+  try {
+    const result = await bcrypt.compare(password, this.password);
+    return result;
+  } catch (e) {
+    return false;
+  }
+};
 
 export default User;

@@ -22,7 +22,7 @@ class userController {
         password,
         phone,
       });
-      new SuccessResponse("User has been created!", {
+      new SuccessResponse("User has been created! Please Sign In!", {
         uesrname: user.username,
         email: user.email,
       }).send(res);
@@ -36,22 +36,25 @@ class userController {
       const { email, password } = req.body;
 
       const user = await User.findOne({
-        attributes: ["username", "email", "token"],
+        attributes: ["username", "email", "token", "password"],
         where: {
           email,
-          password,
         },
       });
       if (user === null) {
-        new AuthFailureResponse(
-          "Please check your password otherwise Sign Up first!"
-        ).send(res);
+        new AuthFailureResponse("Please Sign Up!").send(res);
       } else {
-        const payload = { username: user.username };
-        authMiddleware.generateJwtToken(payload, res, user);
+        const CheckPassword = await user.CheckPassword(password);
+
+        if (CheckPassword) {
+          const payload = { username: user.username };
+          authMiddleware.generateJwtToken(payload, res, user);
+        } else {
+          throw new Error("Incorrect Password");
+        }
       }
     } catch (error) {
-      new ForbiddenResponse("Error on user login!").send(res);
+      new ForbiddenResponse("Incorrect Password!").send(res);
     }
   };
 
