@@ -16,7 +16,7 @@ class userController {
     try {
       const { username, email, password, phone } = req.body;
       const user = await User.create({
-        tokenn: generatedToken,
+        token: generatedToken,
         username,
         email,
         password,
@@ -36,7 +36,7 @@ class userController {
       const { email, password } = req.body;
 
       const user = await User.findOne({
-        attributes: ["username", "email"],
+        attributes: ["username", "email", "token"],
         where: {
           email,
           password,

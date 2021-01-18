@@ -61,7 +61,6 @@ class KeysController {
       }
       throw Error("Unwanted error!");
     } catch (error) {
-      console.log(error);
       new InternalErrorResponse("Error creating the key!").send(res);
     }
   };
