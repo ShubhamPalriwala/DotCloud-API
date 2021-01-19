@@ -5,9 +5,6 @@ import {
   Unique,
   HasMany,
   DataType,
-  ForeignKey,
-  PrimaryKey,
-  AutoIncrement,
 } from "sequelize-typescript";
 import * as bcrypt from "bcrypt";
 import Organisation from "./organisation.model";

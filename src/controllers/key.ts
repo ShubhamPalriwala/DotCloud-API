@@ -133,7 +133,7 @@ class KeysController {
     try {
       const projectScopedKey = Keys.scope({ method: ["projectKey", token] });
       const key = await projectScopedKey.findAll();
-      if (key) {
+      if (key.length !== 0) {
         if (this.isAuthorised(key[0].project, token as string)) {
           const keyData: { [k: string]: any } = {};
           key.map((keys) => {

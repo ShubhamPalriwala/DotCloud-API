@@ -14,6 +14,7 @@ enum ResponseStatus {
   FORBIDDEN = 403,
   NOT_FOUND = 404,
   INTERNAL_ERROR = 500,
+  UNPROCESSABLE_ENTRY = 422,
 }
 
 abstract class ApiResponse {
@@ -49,6 +50,12 @@ abstract class ApiResponse {
 export class AuthFailureResponse extends ApiResponse {
   constructor(message = "Authentication Failure") {
     super(StatusCode.FAILURE, ResponseStatus.UNAUTHORIZED, message);
+  }
+}
+
+export class UnprocessableEntry extends ApiResponse {
+  constructor(message = "Unprocessable Entry") {
+    super(StatusCode.FAILURE, ResponseStatus.UNPROCESSABLE_ENTRY, message);
   }
 }
 
