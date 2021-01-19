@@ -138,7 +138,7 @@ class ProjectsController {
           return collaborators;
         });
         const bulkDeadlineCreation = await Deadline.bulkCreate(deadlinesList, {
-          returning: ["userId"],
+          returning: ["user"],
         });
         if (bulkDeadlineCreation.length === 0) {
           new FailureMsgResponse("Cannot update such collaborators").send(res);
