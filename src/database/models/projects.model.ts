@@ -29,6 +29,7 @@ class Projects extends Model<Projects> {
   })
   collaborators: string[];
 
+  @Unique
   @Column
   name: string;
 

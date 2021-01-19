@@ -14,7 +14,7 @@ import Deadline from "../database/models/deadline.model";
 
 class KeysController {
   fetchKey = async (req: Request, res: Response): Promise<void> => {
-    const { keyName, token } = req.query;
+    const { keyName, token, projectName } = req.query;
     try {
       const projectScopedKey = Keys.scope({ method: ["projectKey", token] });
       const userScopedKey = Keys.scope({ method: ["userToken", token] });
@@ -26,6 +26,21 @@ class KeysController {
         results = await userScopedKey.findOne({
           where: { keyName },
         });
+
+        const userData = await User.findOne({
+          where: { token },
+        });
+
+        const projectData = await Projects.findOne({
+          where: { name: projectName },
+        });
+
+        results = await Keys.findOne({
+          where: { projectId: projectData.projectId, keyName },
+        });
+
+        results.user = userData;
+        results.project = projectData;
 
         const deadLineScope = await Deadline.scope({
           method: [
