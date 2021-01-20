@@ -22,7 +22,10 @@ class ProjectsController {
     try {
       const { projectId } = req.query;
       const userId = req.user.id;
-      const project = await Projects.findOne({ where: { projectId } });
+      const project = await Projects.findOne({
+        where: { projectId },
+        attributes: ["projectId", "collaborators", "name", "owner"],
+      });
       if (project) {
         if (userId === project.owner) {
           new SuccessResponse("Project Found!", project).send(res);

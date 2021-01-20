@@ -21,10 +21,12 @@ class KeysController {
       let results;
       results = await projectScopedKey.findOne({
         where: { keyName },
+        attributes: ["keyName", "value"],
       });
       if (!results) {
         results = await userScopedKey.findOne({
           where: { keyName },
+          attributes: ["keyName", "value"],
         });
 
         const userData = await User.findOne({
@@ -131,8 +133,13 @@ class KeysController {
   fetchProjectKeys = async (req: Request, res: Response): Promise<void> => {
     const { token } = req.query;
     try {
-      const projectScopedKey = Keys.scope({ method: ["projectKey", token] });
-      const key = await projectScopedKey.findAll();
+      const projectScopedKey = Keys.scope({
+        method: ["projectKey", token],
+        attributes: ["keyName", "value"],
+      });
+      const key = await projectScopedKey.findAll({
+        attributes: ["keyName", "value"],
+      });
       if (key.length !== 0) {
         if (this.isAuthorised(key[0].project, token as string)) {
           const keyData: { [k: string]: any } = {};

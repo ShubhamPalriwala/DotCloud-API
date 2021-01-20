@@ -64,6 +64,7 @@ class userController {
 
       const user = await User.findOne({
         where: { username },
+        attributes: ["username", "email", "token", "password"],
       });
       new SuccessResponse("Found user!", user).send(res);
     } catch (error) {

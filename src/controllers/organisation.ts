@@ -15,6 +15,7 @@ class organisationsController {
       const userId = req.user.id;
       const organisation = await organisations.findOne({
         where: { organisationId },
+        attributes: ["name", "ownerId", "collaborators"],
       });
       if (organisation) {
         if (userId === organisation.ownerId) {
