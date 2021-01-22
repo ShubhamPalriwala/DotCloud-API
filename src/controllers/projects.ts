@@ -10,6 +10,7 @@ import {
 } from "../core/ApiResponse";
 import Projects from "../database/models/projects.model";
 import Deadline from "../database/models/deadline.model";
+import Keys from "../database/models/keys.model";
 
 interface DeadlineInsertion {
   deadline: Date;
@@ -80,7 +81,11 @@ class ProjectsController {
         }
       }
       if (project) {
-        new SuccessResponse("Project Created!", project).send(res);
+        new SuccessResponse("Project Created!", {
+          projectId: project.projectId,
+          token: project.token,
+          name: project.name,
+        }).send(res);
       } else {
         new FailureMsgResponse("Cannot create Project!").send(res);
       }
@@ -162,6 +167,11 @@ class ProjectsController {
     try {
       const { projectId } = req.query;
       const userId = req.user.id;
+
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const projKeys = await Keys.destroy({
+        where: { projectId },
+      });
 
       const project = await Projects.destroy({
         where: { projectId, owner: userId },

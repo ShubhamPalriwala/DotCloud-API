@@ -62,7 +62,10 @@ class KeysController {
       if (
         this.isAuthorised(results?.user ?? results?.project, token as string)
       ) {
-        new SuccessResponse("Key Found!", results).send(res);
+        new SuccessResponse("Key Found!", {
+          keyName: results.keyName,
+          value: results.value,
+        }).send(res);
       } else {
         new ForbiddenResponse("You do not have access to this Key!").send(res);
       }
@@ -86,7 +89,11 @@ class KeysController {
         collaborators,
       });
       if (newKey) {
-        new SuccessResponse("Key Created!", newKey).send(res);
+        new SuccessResponse("Key Created!", {
+          keyId: newKey.keyId,
+          keyName: newKey.keyName,
+          value: newKey.value,
+        }).send(res);
         return;
       }
       throw Error("Unwanted error!");

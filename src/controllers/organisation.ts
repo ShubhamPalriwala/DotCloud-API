@@ -46,7 +46,10 @@ class organisationsController {
         collaborators,
       });
       if (organisation) {
-        new SuccessResponse("Organisation created!", organisation).send(res);
+        new SuccessResponse("Organisation created!", {
+          name: organisation.name,
+          organisationId: organisation.organisationId,
+        }).send(res);
       } else {
         new FailureMsgResponse("Unable to create Organisation!").send(res);
       }
