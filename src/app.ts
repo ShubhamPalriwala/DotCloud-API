@@ -3,6 +3,7 @@ import bodyParser from "body-parser";
 import cors from "cors";
 import morgan from "morgan";
 import path from "path";
+import favicon from "serve-favicon";
 import "./database";
 import passport from "passport";
 import projectsRouter from "./routes/projects";
@@ -29,6 +30,7 @@ app.use(passport.initialize());
 app.use(cors({ optionsSuccessStatus: 200 }));
 app.use(morgan("tiny"));
 app.use(express.static(path.join(__dirname, "public")));
+app.use(favicon(path.join(__dirname, "public", "assets", "favicon.png")));
 
 app.get("/", (req, res) => {
   res.send("Up and running 😎");
