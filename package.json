@@ -7,7 +7,8 @@
   "license": "MIT",
   "scripts": {
     "dev": "nodemon --watch 'src/**/*.ts' --exec 'ts-node' src/index.ts",
-    "build": "tsc",
+    "build": "tsc && npm run copy-assets",
+    "copy-assets": "cp -ripv src/public/ dist/public/",
     "start": "node dist/index.js",
     "tailwind:css": "postcss src/public/styles/tailwind.css -o src/public/styles/style.css",
     "lint": "./node_modules/.bin/eslint --ignore-path .gitignore . --fix"

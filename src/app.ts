@@ -33,7 +33,7 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use(favicon(path.join(__dirname, "public", "assets", "favicon.png")));
 
 app.get("/", (req, res) => {
-  res.send("Up and running 😎");
+  res.sendFile("index.html");
 });
 
 const userAuthMiddleware = passport.authenticate("userStrategy", {
