@@ -1,6 +1,6 @@
 import { UnprocessableEntry } from "../core/ApiResponse";
 
-const validator = (schema: any) => (req: Request, res: any, next:any)=> {
+const validator = (schema: any) => (req: Request, res: any, next: any) => {
   const { error } = schema.validate(req.body);
   const valid = error == null;
 
@@ -8,7 +8,7 @@ const validator = (schema: any) => (req: Request, res: any, next:any)=> {
     next();
   } else {
     const { details } = error;
-    const errorMessages = details.map((i:any) => i.message).join(",");
+    const errorMessages = details.map((i: any) => i.message).join(",");
     new UnprocessableEntry(errorMessages).send(res);
   }
 };
